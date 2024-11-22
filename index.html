@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protected CV</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: lightblue;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            color: blue;
+            background: cadetblue;
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+        }
+        input {
+            padding: 10px;
+            margin: 10px;
+            width: 100%;
+            max-width: 300px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: blue;
+            color: yellow;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: red;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p>The CV of Johnny Christian Davies</p>
+        <h1>Enter Password to Proceed</h1>
+        <input type="password" id="password" placeholder="Password" />
+        <button onclick="validatePassword()">Submit</button>
+        <p class="error" id="error"></p>
+    </div>
+
+    <script>
+        // Precomputed hashes for each password
+        const passwordMap = {
+            "7c56a4e06c870e15efdbbeec0972b6ded4c5d82c49811390db47e6a22719af0d": "resume.html", // Hash for IT CV
+            "4913e662610df2f1b4505e9ba8e18da4d17eecd95e71c53a217bf7589af06e3b": "cv.html", // Hash for driving CV
+            "e10befaec33513057232a4fc17d5cddf57961e06d4ffde36b3bc30f4d791fc74": "cv3.html"  // Hash for HGV intention CV
+        };
+
+        // Hash function in JavaScript
+        async function sha256(text) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // Validate the password
+        async function validatePassword() {
+            const password = document.getElementById('password').value;
+            const error = document.getElementById('error');
+
+            // Compute the hash of the entered password
+            const hash = await sha256(password);
+
+            // Check if the hash matches one in the map
+            if (passwordMap[hash]) {
+                window.location.href = passwordMap[hash];
+            } else {
+                error.textContent = "Incorrect password. Please try again.";
+            }
+        }
+    </script>
+</body>
+</html>
